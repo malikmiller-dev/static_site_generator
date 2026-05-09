@@ -1,7 +1,7 @@
 import re
 
-from src.htmlnode import ParentNode, LeafNode, HTMLNode
-from src.textnode import TextNode, TextType, BlockType, text_node_to_html_node
+from htmlnode import ParentNode, LeafNode, HTMLNode
+from textnode import TextNode, TextType, BlockType, text_node_to_html_node
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type=None):

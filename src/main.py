@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 import sys
 
-from src.splitnodes import markdown_to_html_node
+from splitnodes import markdown_to_html_node
 
 
 def copy_directory(src, dest):
@@ -22,7 +22,7 @@ def copy_directory(src, dest):
 
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) > 1:
         basepath = '/'
     else:
         basepath = sys.argv[1]
@@ -36,8 +36,8 @@ def main():
     generate_pages_recursive(content_path, template_path, docs_path, basepath)
     for items in os.listdir(static_path):
         if items.endswith('.png'):
-            abs_images = os.path.join(project_root, f'static//{items}')
-            copy_and_rename(abs_images, f'{docs_path}//images', items)
+            abs_images = os.path.join(project_root, os.path.join('static', items))
+            copy_and_rename(abs_images, os.path.join(docs_path, 'images'), items)
 
 
 def extract_title(markdown):
@@ -99,7 +99,7 @@ def generate_page(from_path, template_path, dest_path, new_name, basepath):
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     for items in os.listdir(dir_path_content):
-        content_path = os.path.join(project_root, f'{dir_path_content}\\{items}')
+        content_path = os.path.join(project_root, os.path.join(dir_path_content, items))
         if os.path.isdir(content_path):
             generate_pages_recursive(content_path, template_path, dest_dir_path, basepath)
         if items.endswith('.md'):
@@ -108,9 +108,10 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
             if parent_name == 'content':
                 generate_page(content_path, template_path, dest_dir_path, 'index.html', basepath)
             elif parent_name == 'contact':
-                generate_page(content_path, template_path, f'{dest_dir_path}\\contact', 'index.html', basepath)
+                generate_page(content_path, template_path, os.path.join(dest_dir_path, 'contact'), 'index.html',
+                              basepath)
             else:
-                generate_page(content_path, template_path, f'{dest_dir_path}\\blog\\{parent_name}',
+                generate_page(content_path, template_path, os.path.join(dest_dir_path, 'blog', parent_name),
                               'index.html', basepath)
 
 
