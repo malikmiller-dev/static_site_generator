@@ -97,12 +97,12 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
             p = Path(content_path)
             parent_name = p.parent.name
             if parent_name == 'content':
-                generate_page(content_path, template_path, dest_dir_path, f'{parent_name}.html')
+                generate_page(content_path, template_path, dest_dir_path, 'index.html')
             elif parent_name == 'contact':
-                generate_page(content_path, template_path, f'{dest_dir_path}\\contact', f'{parent_name}.html')
+                generate_page(content_path, template_path, f'{dest_dir_path}\\contact', 'index.html')
             else:
                 generate_page(content_path, template_path, f'{dest_dir_path}\\blog\\{parent_name}',
-                              f'{parent_name}.html')
+                              'index.html')
 
 
 if __name__ == "__main__":
