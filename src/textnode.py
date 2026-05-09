@@ -61,11 +61,19 @@ def text_node_to_html_node(text_node):
         if text_node.tag == 'h6':
             return LeafNode('h6', text_node.text, None)
     if text_node.text_type == TextType.LINK:
-        return LeafNode('a', text_node.text, {"href": text_node.url})
+        href = text_node.url
+
+        if href.startswith("/") and href != "/":
+            if "." not in os.path.basename(href) and not href.endswith("/"):
+                href += "/"
+
+        return LeafNode("a", text_node.text, {"href": href})
     if text_node.text_type == TextType.IMAGE:
         src = text_node.url
-        if src.startswith('/'):
-            src = f'/images/{os.path.basename(src)}'
-        return LeafNode('img', '', {'src': src, 'alt': text_node.text})
+
+        if src.startswith("/"):
+            src = f"/images/{os.path.basename(src)}"
+
+        return LeafNode("img", "", {"src": src, "alt": text_node.text})
 
     raise Exception('Text Type not found')
