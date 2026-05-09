@@ -1,0 +1,5 @@
+#cached python files
+__pycache__/*
+
+#png files
+.png:Zone.Identifier
