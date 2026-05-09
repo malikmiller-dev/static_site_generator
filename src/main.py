@@ -23,9 +23,9 @@ def copy_directory(src, dest):
 
 def main():
     if len(sys.argv) > 1:
-        basepath = '/'
-    else:
         basepath = sys.argv[1]
+    else:
+        basepath = '/'
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
     static_path = os.path.join(project_root, "static")
@@ -78,21 +78,14 @@ def generate_page(from_path, template_path, dest_path, new_name, basepath):
         h1_extract = extract_title(file_content)
     with open(nw_pth, 'r') as rd_tmp_pth:
         full_tmp = rd_tmp_pth.read()
-        tmp_hd = [temp.split('<title>') for temp in full_tmp.split('</title>')]
-        tmp_content = [temp.split('<article>') for temp in full_tmp.split('</article>')]
-        tmp_hd_repl = tmp_hd[0][1]
-        tmp_content_repl = tmp_content[0][1]
 
-    replacements = {
-        tmp_hd_repl: h1_extract,
-        tmp_content_repl: file_convert_html,
-        'href="/': f'href="{basepath}',
-        'src="/': f'src="{basepath}'
-    }
+    full_tmp = full_tmp.replace("{{ Title }}", h1_extract)
+    full_tmp = full_tmp.replace("{{ Content }}", file_convert_html)
+
+    full_tmp = full_tmp.replace('href="/', f'href="{basepath}')
+    full_tmp = full_tmp.replace('src="/', f'src="{basepath}')
 
     with open(nw_pth, 'w') as f:
-        for old, new in replacements.items():
-            full_tmp = full_tmp.replace(old, new)
         f.write(full_tmp)
 
 
