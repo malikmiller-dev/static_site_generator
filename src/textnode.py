@@ -65,7 +65,7 @@ def text_node_to_html_node(text_node):
     if text_node.text_type == TextType.IMAGE:
         src = text_node.url
         if src.startswith('/'):
-            src = f'docs/images/{os.path.basename(src)}'
+            src = f'/images/{os.path.basename(src)}'
         return LeafNode('img', '', {'src': src, 'alt': text_node.text})
 
     raise Exception('Text Type not found')
