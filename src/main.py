@@ -5,11 +5,6 @@ import sys
 
 from src.splitnodes import markdown_to_html_node
 
-if len(sys.argv) < 2:
-    basepath = '/'
-else:
-    basepath = sys.argv[1]
-
 
 def copy_directory(src, dest):
     if not os.path.exists(dest):
@@ -27,6 +22,10 @@ def copy_directory(src, dest):
 
 
 def main():
+    if len(sys.argv) < 2:
+        basepath = '/'
+    else:
+        basepath = sys.argv[1]
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
     static_path = os.path.join(project_root, "static")
@@ -34,7 +33,7 @@ def main():
     template_path = os.path.join(project_root, 'template.html')
 
     content_path = os.path.join(project_root, 'content')
-    generate_pages_recursive(content_path, template_path, docs_path)
+    generate_pages_recursive(content_path, template_path, docs_path, basepath)
     for items in os.listdir(static_path):
         if items.endswith('.png'):
             abs_images = os.path.join(project_root, f'static//{items}')
@@ -65,7 +64,7 @@ def copy_and_rename(src_path, dest_path, new_name):
         print(f'Unexpected Error: {e}')
 
 
-def generate_page(from_path, template_path, dest_path, new_name):
+def generate_page(from_path, template_path, dest_path, new_name, basepath):
     print(f'Generating page from {from_path} to {dest_path} using {template_path}')
     nw_pth = os.path.join(dest_path, new_name)
     if not os.path.exists(dest_path):
@@ -87,33 +86,32 @@ def generate_page(from_path, template_path, dest_path, new_name):
     replacements = {
         tmp_hd_repl: h1_extract,
         tmp_content_repl: file_convert_html,
-        '<a href="/': f'<a href="{basepath}',
-        '<src="/': f'<src="{basepath}"'
+        'href="/': f'href="{basepath}',
+        'src="/': f'src="{basepath}'
     }
 
-    for old, new in replacements.items():
-        full_tmp = full_tmp.replace(old, new)
-
     with open(nw_pth, 'w') as f:
+        for old, new in replacements.items():
+            full_tmp = full_tmp.replace(old, new)
         f.write(full_tmp)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     for items in os.listdir(dir_path_content):
         content_path = os.path.join(project_root, f'{dir_path_content}\\{items}')
         if os.path.isdir(content_path):
-            generate_pages_recursive(content_path, template_path, dest_dir_path)
+            generate_pages_recursive(content_path, template_path, dest_dir_path, basepath)
         if items.endswith('.md'):
             p = Path(content_path)
             parent_name = p.parent.name
             if parent_name == 'content':
-                generate_page(content_path, template_path, dest_dir_path, 'index.html')
+                generate_page(content_path, template_path, dest_dir_path, 'index.html', basepath)
             elif parent_name == 'contact':
-                generate_page(content_path, template_path, f'{dest_dir_path}\\contact', 'index.html')
+                generate_page(content_path, template_path, f'{dest_dir_path}\\contact', 'index.html', basepath)
             else:
                 generate_page(content_path, template_path, f'{dest_dir_path}\\blog\\{parent_name}',
-                              'index.html')
+                              'index.html', basepath)
 
 
 if __name__ == "__main__":
