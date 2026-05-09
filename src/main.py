@@ -33,11 +33,26 @@ def main():
     template_path = os.path.join(project_root, 'template.html')
 
     content_path = os.path.join(project_root, 'content')
+    if os.path.exists(docs_path):
+        shutil.rmtree(docs_path)
+
+    os.makedirs(docs_path, exist_ok=True)
+
+    shutil.copy(
+        os.path.join(static_path, "index.css"),
+        os.path.join(docs_path, "index.css"),
+    )
+
+    images_path = os.path.join(docs_path, "images")
+    os.makedirs(images_path, exist_ok=True)
+
+    for item in os.listdir(static_path):
+        if item.endswith(".png"):
+            src_path = os.path.join(static_path, item)
+            dest_path = os.path.join(images_path, item)
+            shutil.copy(src_path, dest_path)
+
     generate_pages_recursive(content_path, template_path, docs_path, basepath)
-    for items in os.listdir(static_path):
-        if items.endswith('.png'):
-            abs_images = os.path.join(project_root, os.path.join('static', items))
-            copy_and_rename(abs_images, os.path.join(docs_path, 'images'), items)
 
 
 def extract_title(markdown):
@@ -69,15 +84,13 @@ def generate_page(from_path, template_path, dest_path, new_name, basepath):
     nw_pth = os.path.join(dest_path, new_name)
     if not os.path.exists(dest_path):
         Path(dest_path).mkdir(parents=True, exist_ok=True)
-    if new_name not in os.listdir(dest_path):
-        copy_and_rename(template_path, dest_path, new_name)
 
     with open(from_path, 'r') as out_path:
         file_content = out_path.read()
         file_convert_html = markdown_to_html_node(file_content).to_html()
         h1_extract = extract_title(file_content)
-    with open(nw_pth, 'r') as rd_tmp_pth:
-        full_tmp = rd_tmp_pth.read()
+    with open(template_path, 'r') as template_file:
+        full_tmp = template_file.read()
 
     full_tmp = full_tmp.replace("{{ Title }}", h1_extract)
     full_tmp = full_tmp.replace("{{ Content }}", file_convert_html)
