@@ -28,7 +28,6 @@ def copy_directory(src, dest):
 
 def main():
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    default_name = None
 
     static_path = os.path.join(project_root, "static")
     docs_path = os.path.join(project_root, "docs")
@@ -40,9 +39,6 @@ def main():
         if items.endswith('.png'):
             abs_images = os.path.join(project_root, f'static//{items}')
             copy_and_rename(abs_images, f'{docs_path}//images', items)
-        else:
-            abs_other = os.path.join(project_root, f'static//{items}')
-            copy_and_rename(abs_other, docs_path, items)
 
 
 def extract_title(markdown):
@@ -91,7 +87,7 @@ def generate_page(from_path, template_path, dest_path, new_name):
     replacements = {
         tmp_hd_repl: h1_extract,
         tmp_content_repl: file_convert_html,
-        '<a href="/"': f'<a href="{basepath}"',
+        '<a href="/': f'<a href="{basepath}',
         '<src="/': f'<src="{basepath}"'
     }
 
