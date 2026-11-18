@@ -8,8 +8,6 @@ on:
     - cron: '0 17 * * *'
     # Backup attempts if GitHub delays or drops the top-of-hour trigger.
     - cron: '17,37 16,17 * * *'
-    # Temporary scheduler verification; removed after observing a scheduled run.
-    - cron: '*/5 * * * *'
   workflow_dispatch:
   # Verify the full update flow when its script or configuration changes.
   push:
