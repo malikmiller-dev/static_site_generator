@@ -2,8 +2,13 @@ name: Daily README update
 
 on:
   schedule:
-    - cron: '0 12 * * *'
-      timezone: America/New_York
+    # Noon Eastern is 16:00 UTC in summer and 17:00 UTC in winter.
+    # The script skips pre-noon runs and dates already recorded.
+    - cron: '0 16,17 * * *'
+    # Backup attempts if GitHub delays or drops the top-of-hour trigger.
+    - cron: '17,37 16,17 * * *'
+    # Temporary scheduler verification; removed after observing a scheduled run.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
   # Verify the full update flow when its script or configuration changes.
   push:
@@ -33,7 +38,7 @@ jobs:
           ref: main
 
       - name: Append today's update
-        run: python3 scripts/update_readme.py
+        run: python3 scripts/update_readme.py --scheduled
 
       - name: Commit and push README
         shell: bash

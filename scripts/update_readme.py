@@ -29,8 +29,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--readme", type=Path, default=Path(__file__).resolve().parents[1] / "README.md")
     parser.add_argument("--date", type=date.fromisoformat, help="Override the Eastern calendar date")
+    parser.add_argument("--scheduled", action="store_true", help="Skip runs before noon Eastern")
     args = parser.parse_args()
-    day = args.date or datetime.now(ZoneInfo("America/New_York")).date()
+    now = datetime.now(ZoneInfo("America/New_York"))
+    if args.scheduled and now.hour < 12:
+        print("Before noon Eastern; no README change needed.")
+        return
+    day = args.date or now.date()
 
     with args.readme.open(encoding="utf-8", newline="") as source:
         content = source.read()
