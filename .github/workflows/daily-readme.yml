@@ -2,8 +2,6 @@ name: Daily README update
 
 on:
   schedule:
-    # Temporary timer verification; removed after testing.
-    - cron: '1-59/5 * * * *'
     # Noon Eastern is 16:00 UTC in summer and 17:00 UTC in winter.
     # The script skips pre-noon runs and dates already recorded.
     - cron: '0 16 * * *'
